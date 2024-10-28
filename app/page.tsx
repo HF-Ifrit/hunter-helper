@@ -1,12 +1,10 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
-import NavBar from "./_components/NavBar";
-import useSWR from "swr";
 import Select from "react-select";
+import useSWR from "swr";
 import MonsterInfo from "./_components/MonsterInfo";
-
-const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json());
+import NavBar from "./_components/NavBar";
+import { fetcher } from "./helpers";
 
 export default function Home() {
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
@@ -34,7 +32,7 @@ export default function Home() {
       <NavBar />
       <main className="flex w-full items-center justify-center min-h-20 sm:items-start">
         <Select
-          className="w-3/5 text-center"
+          className="w-3/5 text-center my-auto"
           placeholder="Select a monster..."
           options={options}
           styles={{
@@ -54,8 +52,8 @@ export default function Home() {
         />
       </main>
       {selectedMonster && (
-        <div className="row-start-3 w-full">
-          <hr className="bg-red-700 w-full my-10" />
+        <div className="row-start-3 w-full px-4">
+          <hr className="border-orange-900 w-full my-10" />
           <MonsterInfo monster={selectedMonster} />
         </div>
       )}

@@ -39,7 +39,7 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
                   height={40}
                 />
                 {Array.from({ length: weakness.stars }, (_, i) => (
-                  <Image key={`star-${i}`} src="/star.svg" alt="star" width={20} height={20} />
+                  <Image key={`star-${i}`} src="/star.svg" alt="star" width={20} height={20} className="my-auto"/>
                 ))}
               </button>
             ))}
