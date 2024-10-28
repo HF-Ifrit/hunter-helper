@@ -15,7 +15,8 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
         <ul className="flex">
           {monster.elements.map((element) => (
             <Image
-              src={`/elements/${element.toLowerCase()}.png`}
+              key={`img-${element}`}
+              src={`/elements/${element.toLowerCase()}`}
               alt={element}
               width={40}
               height={40}
@@ -29,15 +30,16 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
           {monster.weaknesses
             .sort((a, b) => b.stars - a.stars)
             .map((weakness) => (
-              <button className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded">
+              <button key={`weakness-btn-${weakness.element}`} className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded">
                 <Image
+                  key={`weakness-${weakness.element}`}
                   src={`/elements/${weakness.element.toLowerCase()}`}
                   alt={weakness.element}
                   width={40}
                   height={40}
                 />
                 {Array.from({ length: weakness.stars }, (_, i) => (
-                  <Image src="/star.svg" alt="star" width={20} height={20} />
+                  <Image key={`star-${i}`} src="/star.svg" alt="star" width={20} height={20} />
                 ))}
               </button>
             ))}
