@@ -71,13 +71,6 @@ interface Recovery {
     items: Item[]; // An array of items that can remove the ailment
 }
 
-interface Ailtment {
-    id: number; // The ID of the ailment
-    name: string; // The name of the ailment
-    description: string; // A short description of the ailment
-    recovery: Recovery; // An object describing methods to recover from the ailment
-    protection: Protection; // An object describing methods for mitigating or preventing the ailment
-}
 type ElementType = "fire" | "water" | "ice" | "thunder" | "dragon" | "blast" | "sleep" | "paralysis" | "poison" | "stun";
 interface Ailment {
     id: number; // The ID of the ailment
@@ -123,4 +116,70 @@ interface Monster {
     resistances: MonsterResistance[]; // An array of the monster's elemental resistances
     weaknesses: MonsterWeakness[]; // An array of the monster's elemental weaknesses
     rewards: MonsterReward[]; // An array of the possible rewards / drops from the monster
+}
+
+interface CraftingCost {
+    quantity: number // The quantity of the item needed for the craft
+    item: Item // The item to be consumed during crafting
+}
+interface WeaponCraftingInfo {
+    craftable: boolean; // Indicates whether or not the weapon may be directly crafted
+    previous: number | null; // The ID of the weapon that this weapon is upgraded from, or null if nothing upgrades into this weapon
+    branches: number[]; // An array of IDs that the weapon may be upgraded into
+    craftingMaterials: CraftingCost[]; // An array containing the material cost to create the weapon; will always be empty if craftable is false
+    upgradeMaterials: CraftingCost[]; // An array containing the material cost to upgrade the weapon identified by previous into this weapon; will always be empty if previous is null
+}
+
+interface WeaponAssets {
+    icon: string // The weapon's icon
+    image: string // An image showing the weapon's in game model
+}
+interface WeaponElement {
+    type: ElementType; // The element's damage type
+    damage: number; // The power of the element
+    hidden: boolean; // Indicates whether or not the element is a hidden element
+}
+interface Slot {
+    rank: number; // The rank of the slot
+}
+interface Attack {
+    display: number; // The attack value of the weapon that's displayed in game
+    raw: number; // The true raw attack value of the weapon
+}
+
+interface WeaponAttributes {
+    affinity?: number; // The affinity of the weapon
+    defense?: number; // Some weapons (namely "gunlance" types) augment player defense; such weapons indicate that with this field
+}
+
+interface WeaponSharpness {
+    red: number; // The number of normal hits the weapon can make at red sharpness
+    orange: number; // The number of normal hits the weapon can make at orange sharpness
+    yellow: number; // The number of normal hits the weapon can make at yellow sharpness
+    green: number; // The number of normal hits the weapon can make at green sharpness
+    blue: number; // The number of normal hits the weapon can make at blue sharpness
+    white: number; // The number of normal hits the weapon can make at white sharpness
+    purple: number; // The number of normal hits the weapon can make at purple sharpness
+}
+type EldersealType = "low" | "average" | "high";
+
+type WeaponType = "great-sword" | "dual-blades" | "lance" | "charge-blade" | "heavy-bowgun" | "long-sword" | "sword-and-shield" | "hunting-horn" | "gunlance" | "insect-glaive" | "light-bowgun" | "bow" | "hammer" | "switch-axe";
+
+type DamageType = "blunt" | "piercing" | "slashing" | "sever";
+
+interface Weapon {
+    id: number; // The ID of the weapon
+    slug: string; // A human readable unique identifier
+    name: string; // The name of the weapon
+    type: WeaponType; // The weapon's type
+    rarity: number; // The rarity of the weapon
+    attack: Attack; // Contains information about the attack values of the weapon
+    slots: Slot[]; // An array containing slot information for the weapon
+    elements: WeaponElement[]; // An array containing element damage info for the weapon
+    crafting: WeaponCraftingInfo; // Contains crafting information for the weapon
+    assets: WeaponAssets; // Contains information about weapon UI assets (such as preview images)
+    durability: WeaponSharpness[]; // An array of sharpness information, ordered by handicraft level; base sharpness can always be found at index 0
+    elderseal: EldersealType; // The elderseal type attributed to the weapon
+    damageType: DamageType; // The primary damage type dealt by the weapon
+    attributes?: WeaponAttributes; // See WeaponAttributes for more information  
 }

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import WeaponElementFilter from "./WeaponElementFilter";
+
 export default function MonsterInfo({ monster }: { monster: Monster }) {
   return (
     <>
@@ -30,7 +32,10 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
           {monster.weaknesses
             .sort((a, b) => b.stars - a.stars)
             .map((weakness) => (
-              <button key={`weakness-btn-${weakness.element}`} className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded">
+              <button
+                key={`weakness-btn-${weakness.element}`}
+                className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded"
+              >
                 <Image
                   key={`weakness-${weakness.element}`}
                   src={`/elements/${weakness.element.toLowerCase()}`}
@@ -39,12 +44,20 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
                   height={40}
                 />
                 {Array.from({ length: weakness.stars }, (_, i) => (
-                  <Image key={`star-${i}`} src="/star.svg" alt="star" width={20} height={20} className="my-auto"/>
+                  <Image
+                    key={`star-${i}`}
+                    src="/star.svg"
+                    alt="star"
+                    width={20}
+                    height={20}
+                    className="my-auto"
+                  />
                 ))}
               </button>
             ))}
         </ul>
       </div>
+      <WeaponElementFilter element={"dragon"} />
     </>
   );
 }

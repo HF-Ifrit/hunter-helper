@@ -36,7 +36,7 @@ export default function Home() {
           placeholder="Select a monster..."
           options={options}
           styles={{
-            control: (base, state) => ({
+            control: (base) => ({
               ...base,
               borderRadius: "9999px",
             }),

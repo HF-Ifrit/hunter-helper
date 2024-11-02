@@ -11,6 +11,8 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        darkbrown: "var(--darkbrown)",
+        lightbrown: "var(--lightbrown)",
       },
       fontFamily: {
         'julius': ['"Julius Sans One"'],
