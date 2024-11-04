@@ -10,7 +10,7 @@ export default function WeaponCard({ weapon }: { weapon: Weapon }) {
       >
         <p className="text-black font-julius mb-2 font-bold">{weapon.name}</p>
         <div id="statsLine1" className="flex mb-2">
-          <div className="flex mr-2">
+          <div id="weaponDamageDisplay" className="flex mr-2">
             <Image
               src={`/weapons/${weapon.type.toLowerCase()}-icon.webp`}
               alt={weapon.type}
@@ -21,7 +21,7 @@ export default function WeaponCard({ weapon }: { weapon: Weapon }) {
               Attack {weapon.attack.display}
             </p>
           </div>
-          <div className="flex">
+          <div id="affinityDisplay" className="flex">
             <Image
               src="/affinity-icon.svg"
               alt="Affinity"
@@ -35,6 +35,7 @@ export default function WeaponCard({ weapon }: { weapon: Weapon }) {
         </div>
         <div id="statsLine2" className="flex items-center">
           <div
+            id="elementDamageDisplay"
             className={`flex mr-2 ${
               weapon.elements[0].hidden
                 ? "border-2 border-black border-dashed rounded"

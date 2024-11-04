@@ -11,11 +11,7 @@ export default function Home() {
   let options: Array<{ label: string; value: string }> = [
     { label: "Loading...", value: "" },
   ];
-  const {
-    data,
-    error,
-    isLoading,
-  }: { data: Monster[]; error: any; isLoading: boolean } = useSWR(
+  const { data, isLoading }: { data: Monster[]; isLoading: boolean } = useSWR(
     "https://mhw-db.com/monsters",
     fetcher
   );
@@ -52,7 +48,7 @@ export default function Home() {
         />
       </main>
       {selectedMonster && (
-        <div className="row-start-3 w-full px-4">
+        <div className="row-start-3 w-full px-4 pb-4">
           <hr className="border-orange-900 w-full my-10" />
           <MonsterInfo monster={selectedMonster} />
         </div>

@@ -1,7 +1,9 @@
 import Image from "next/image";
+import { useState } from "react";
 import WeaponElementFilter from "./WeaponElementFilter";
 
 export default function MonsterInfo({ monster }: { monster: Monster }) {
+  const [selectedElement, setSelectedElement] = useState<ElementType | "">("");
   return (
     <>
       <Image
@@ -12,7 +14,7 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
       />
       <p>{monster.name}</p>
       <p>{monster.description}</p>
-      <div className="flex items-center">
+      <div id="elements" className="flex items-center">
         <p>Element:</p>
         <ul className="flex">
           {monster.elements.map((element) => (
@@ -26,7 +28,7 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
           ))}
         </ul>
       </div>
-      <div className="flex items-center">
+      <div id="weaknesses" className="flex items-center">
         <p>Weakness:</p>
         <ul className="flex">
           {monster.weaknesses
@@ -35,6 +37,11 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
               <button
                 key={`weakness-btn-${weakness.element}`}
                 className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded"
+                onClick={() =>
+                  selectedElement === weakness.element
+                    ? setSelectedElement("")
+                    : setSelectedElement(weakness.element)
+                }
               >
                 <Image
                   key={`weakness-${weakness.element}`}
@@ -57,7 +64,7 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
             ))}
         </ul>
       </div>
-      <WeaponElementFilter element={"dragon"} />
+      {selectedElement && <WeaponElementFilter element={selectedElement} />}
     </>
   );
 }
