@@ -28,6 +28,8 @@ export default function WeaponElementFilter({
 }: {
   element: ElementType;
 }) {
+  const [showHiddenElementWeapons, setShowHiddenElementWeapons] =
+    useState(true);
   const [selectedWeaponTypes, setSelectedWeaponTypes] = useState<
     Map<string, boolean>
   >(new Map(TYPES.map((type) => [type, true])));
@@ -103,7 +105,14 @@ export default function WeaponElementFilter({
             className="flex items-center ml-2 mb-4 gap-x-28"
           >
             <div id="hiddenElementToggle" className="flex items-center">
-              <input type="checkbox" className="mr-2 accent-black" />
+              <input
+                type="checkbox"
+                checked={showHiddenElementWeapons}
+                onChange={() =>
+                  setShowHiddenElementWeapons(!showHiddenElementWeapons)
+                }
+                className="mr-2 accent-black"
+              />
               <label className="text-black font-montserrat">
                 Show Hidden Element Weapons
               </label>
@@ -121,8 +130,16 @@ export default function WeaponElementFilter({
               />
             </div>
           </div>
-          <div id="weaponCards" className="grid grid-cols-3 gap-4">
+          <div
+            id="weaponCards"
+            className="grid grid-cols-3 gap-4 max-h-screen overflow-y-auto"
+          >
             {data
+              .filter((weapon) =>
+                showHiddenElementWeapons
+                  ? true
+                  : !weapon.elements.some((element) => element.hidden)
+              )
               .filter((weapon) => selectedWeaponTypes.get(weapon.type))
               .map((weapon) => (
                 <WeaponCard key={weapon.id} weapon={weapon} />

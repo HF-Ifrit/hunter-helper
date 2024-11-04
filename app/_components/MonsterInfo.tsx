@@ -36,7 +36,9 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
             .map((weakness) => (
               <button
                 key={`weakness-btn-${weakness.element}`}
-                className="flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded"
+                className={`flex border-2 border-foreground hover:bg-foreground m-2 p-2 rounded ${
+                  selectedElement === weakness.element ? "bg-foreground" : ""
+                }`}
                 onClick={() =>
                   selectedElement === weakness.element
                     ? setSelectedElement("")
