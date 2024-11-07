@@ -6,16 +6,21 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
   const [selectedElement, setSelectedElement] = useState<ElementType | "">("");
   return (
     <>
-      <Image
-        src={`/monsters/${monster.name.toLowerCase()}/icon.png`}
-        alt={monster.name}
-        width={200}
-        height={200}
-      />
-      <p>{monster.name}</p>
-      <p>{monster.description}</p>
+      <div className="flex">
+        <Image
+          className="mr-8"
+          src={`/monsters/${monster.name.toLowerCase()}/icon.png`}
+          alt={monster.name}
+          width={200}
+          height={200}
+        />
+        <div id="titleDescription" className="flex-row">
+          <h1 className="font-montserrat text-6xl">{monster.name}</h1>
+          <h2 className="font-montserrat text-2xl">{monster.description}</h2>
+        </div>
+      </div>
       <div id="elements" className="flex items-center">
-        <p>Element:</p>
+        <p className="font-julius text-2xl">Element:</p>
         <ul className="flex">
           {monster.elements.map((element) => (
             <Image
@@ -29,7 +34,7 @@ export default function MonsterInfo({ monster }: { monster: Monster }) {
         </ul>
       </div>
       <div id="weaknesses" className="flex items-center">
-        <p>Weakness:</p>
+        <p className="font-julius text-2xl">Weakness:</p>
         <ul className="flex">
           {monster.weaknesses
             .sort((a, b) => b.stars - a.stars)

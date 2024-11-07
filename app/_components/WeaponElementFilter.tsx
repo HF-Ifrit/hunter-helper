@@ -4,7 +4,9 @@ import Image from "next/image";
 import { useState } from "react";
 import useSWR from "swr";
 import { fetcher } from "../helpers";
+import SortButton from "./SortButton";
 import WeaponCard from "./WeaponCard";
+import { debounce } from "./utils";
 
 const TYPES = [
   "great-sword",
@@ -23,6 +25,12 @@ const TYPES = [
   "switch-axe",
 ];
 
+export enum SortOption {
+  ASC = 1,
+  DESC = -1,
+  NONE = 0,
+}
+
 export default function WeaponElementFilter({
   element,
 }: {
@@ -30,17 +38,33 @@ export default function WeaponElementFilter({
 }) {
   const [showHiddenElementWeapons, setShowHiddenElementWeapons] =
     useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortOptions, setSortOptions] = useState<Map<string, SortOption>>(
+    new Map<string, SortOption>()
+  );
   const [selectedWeaponTypes, setSelectedWeaponTypes] = useState<
     Map<string, boolean>
   >(new Map(TYPES.map((type) => [type, true])));
-  const {
-    data,
-    error,
-    isLoading,
-  }: { data: Weapon[]; error: any; isLoading: boolean } = useSWR(
+  const { data, isLoading }: { data: Weapon[]; isLoading: boolean } = useSWR(
     `https://mhw-db.com/weapons?q={"elements.type": "${element}"}`,
     fetcher
   );
+
+  let filteredWeaponData: Weapon[] | [] = [];
+  if (!isLoading) {
+    filteredWeaponData = data
+      .filter((weapon) =>
+        showHiddenElementWeapons
+          ? true
+          : !weapon.elements.some((element) => element.hidden)
+      )
+      .filter((weapon) => selectedWeaponTypes.get(weapon.type))
+      .filter((weapon) =>
+        searchTerm.length
+          ? weapon.name.toLowerCase().includes(searchTerm)
+          : true
+      );
+  }
   return (
     <>
       {!isLoading && data.length > 0 && (
@@ -117,7 +141,10 @@ export default function WeaponElementFilter({
                 Show Hidden Element Weapons
               </label>
             </div>
-            <div className="justify-items-center items-center ml-2 pl-4 pb-1 border-b-2 w-1/3">
+            <div
+              id="searchBar"
+              className="justify-items-center items-center ml-2 pl-4 pb-1 border-b-2 w-1/3"
+            >
               <FontAwesomeIcon
                 icon={faMagnifyingGlass}
                 className="mr-2"
@@ -127,21 +154,19 @@ export default function WeaponElementFilter({
                 type="text"
                 className="bg-transparent text-gray-400 focus:outline-none"
                 placeholder="Search by weapon name..."
+                onChange={(e) => {
+                  debounce(setSearchTerm, 200)(e.target.value);
+                }}
               />
             </div>
+            <SortButton field="Name" />
           </div>
           <div
             id="weaponCards"
             className="grid grid-cols-3 gap-4 max-h-screen overflow-y-auto"
           >
-            {data
-              .filter((weapon) =>
-                showHiddenElementWeapons
-                  ? true
-                  : !weapon.elements.some((element) => element.hidden)
-              )
-              .filter((weapon) => selectedWeaponTypes.get(weapon.type))
-              .map((weapon) => (
+            {filteredWeaponData &&
+              filteredWeaponData.map((weapon) => (
                 <WeaponCard key={weapon.id} weapon={weapon} />
               ))}
           </div>
