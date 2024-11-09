@@ -25,6 +25,23 @@ const TYPES = [
   "switch-axe",
 ];
 
+const SORT_FIELDS = ["name", "attack", "element", "affinity"];
+const FIELD_SORT_FUNCTIONS: {
+  [key: string]: (a: Weapon, b: Weapon) => number;
+} = {
+  attack: (a: Weapon, b: Weapon) => a.attack.display - b.attack.display,
+  affinity: (a: Weapon, b: Weapon) => {
+    const aAffinity = a.attributes?.affinity ?? 0;
+    const bAffinity = b.attributes?.affinity ?? 0;
+    return aAffinity - bAffinity;
+  },
+  element: (a: Weapon, b: Weapon) => {
+    const aElement = a.elements[0]?.damage;
+    const bElement = b.elements[0]?.damage;
+    return aElement - bElement;
+  },
+};
+
 export enum SortOption {
   ASC = 1,
   DESC = -1,
@@ -39,9 +56,10 @@ export default function WeaponElementFilter({
   const [showHiddenElementWeapons, setShowHiddenElementWeapons] =
     useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOptions, setSortOptions] = useState<Map<string, SortOption>>(
-    new Map<string, SortOption>()
-  );
+  const [sortOption, setSortOption] = useState<{
+    fieldName: string;
+    sort: SortOption;
+  }>({ fieldName: "name", sort: SortOption.NONE });
   const [selectedWeaponTypes, setSelectedWeaponTypes] = useState<
     Map<string, boolean>
   >(new Map(TYPES.map((type) => [type, true])));
@@ -63,8 +81,37 @@ export default function WeaponElementFilter({
         searchTerm.length
           ? weapon.name.toLowerCase().includes(searchTerm)
           : true
+      )
+      .sort(
+        (a, b) =>
+          sortOption.sort *
+          (typeof a[sortOption.fieldName as keyof Weapon] === "number"
+            ? (a[sortOption.fieldName as keyof Weapon] as number) -
+              (b[sortOption.fieldName as keyof Weapon] as number)
+            : typeof a[sortOption.fieldName as keyof Weapon] === "string"
+            ? (a[sortOption.fieldName as keyof Weapon] as string).localeCompare(
+                b[sortOption.fieldName as keyof Weapon] as string
+              )
+            : FIELD_SORT_FUNCTIONS[sortOption.fieldName](a, b))
       );
   }
+
+  const updateSortOption = (fieldName: string) => {
+    if (sortOption.fieldName === fieldName) {
+      setSortOption({
+        fieldName,
+        sort:
+          sortOption.sort === SortOption.ASC
+            ? SortOption.DESC
+            : sortOption.sort === SortOption.DESC
+            ? SortOption.NONE
+            : SortOption.ASC,
+      });
+    } else {
+      setSortOption({ fieldName, sort: SortOption.ASC });
+    }
+  };
+
   return (
     <>
       {!isLoading && data.length > 0 && (
@@ -78,7 +125,7 @@ export default function WeaponElementFilter({
               className="flex items-center gap-x-2"
             >
               <button
-                className="border-2 border-black rounded p-2 h-1/2 text-black shadow-xl font-montserrat font-bold hover:bg-darkbrown"
+                className="border-2 border-black rounded p-2 h-1/2 text-black shadow-xl font-montserrat font-bold hover:bg-foreground"
                 onClick={() => {
                   const newMap = new Map(selectedWeaponTypes);
                   newMap.forEach((value, key) => {
@@ -90,7 +137,7 @@ export default function WeaponElementFilter({
                 Select All
               </button>
               <button
-                className="border-2 border-black rounded p-2 h-1/2 text-black shadow-xl font-montserrat font-bold hover:bg-darkbrown"
+                className="border-2 border-black rounded p-2 h-1/2 text-black shadow-xl font-montserrat font-bold hover:bg-foreground"
                 onClick={() => {
                   const newMap = new Map(selectedWeaponTypes);
                   newMap.forEach((value, key) => {
@@ -128,8 +175,12 @@ export default function WeaponElementFilter({
             id="searchOptions"
             className="flex items-center ml-2 mb-4 gap-x-28"
           >
-            <div id="hiddenElementToggle" className="flex items-center">
+            <div
+              id="hiddenElementToggle"
+              className="flex items-center px-1 border border-transparent hover:border hover:border-black hover:rounded hover:bg-foreground"
+            >
               <input
+                id="hiddenElementToggle-checkbox"
                 type="checkbox"
                 checked={showHiddenElementWeapons}
                 onChange={() =>
@@ -137,7 +188,10 @@ export default function WeaponElementFilter({
                 }
                 className="mr-2 accent-black"
               />
-              <label className="text-black font-montserrat">
+              <label
+                htmlFor="hiddenElementToggle-checkbox"
+                className="text-black font-montserrat font-bold cursor-pointer"
+              >
                 Show Hidden Element Weapons
               </label>
             </div>
@@ -159,7 +213,16 @@ export default function WeaponElementFilter({
                 }}
               />
             </div>
-            <SortButton field="Name" />
+            <div id="sortButtons" className="flex gap-x-2 items-center">
+              {SORT_FIELDS.map((fieldName) => (
+                <SortButton
+                  key={`sort-button-${fieldName}`}
+                  fieldName={fieldName}
+                  sortOption={sortOption}
+                  updateSortOption={updateSortOption}
+                />
+              ))}
+            </div>
           </div>
           <div
             id="weaponCards"
