@@ -3,18 +3,21 @@ import { useState } from "react";
 import Select from "react-select";
 import useSWR from "swr";
 import MonsterInfo from "./_components/MonsterInfo";
-import NavBar from "./_components/NavBar";
 import { fetcher } from "./helpers";
+
+interface MonsterOption {
+  label: string;
+  value: string;
+}
 
 export default function Home() {
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
-  let options: Array<{ label: string; value: string }> = [
-    { label: "Loading...", value: "" },
-  ];
+  let options: Array<MonsterOption> = [{ label: "Loading...", value: "" }];
   const { data, isLoading }: { data: Monster[]; isLoading: boolean } = useSWR(
     "https://mhw-db.com/monsters",
     fetcher
   );
+
   if (!isLoading && data) {
     options = data
       .map((monster) => ({
@@ -23,13 +26,18 @@ export default function Home() {
       }))
       .sort((a, b) => a.label.localeCompare(b.label));
   }
+
+  console.log("Rendered home page");
   return (
     <>
-      <NavBar />
-      <main className="flex w-full items-center justify-center min-h-20 sm:items-start">
+      <div
+        id="centeredPageContainer"
+        className="flex-col w-full pt-4 items-center justify-center justify-items-center min-h-20 sm:items-start"
+      >
         <Select
-          className="w-3/5 text-center my-auto"
-          placeholder="Select a monster..."
+          id="monsterSelector"
+          className="w-1/5 text-center my-auto"
+          placeholder="Select your hunt target..."
           options={options}
           styles={{
             control: (base) => ({
@@ -46,10 +54,10 @@ export default function Home() {
             )
           }
         />
-      </main>
+      </div>
       {selectedMonster && (
-        <div className="row-start-3 w-full px-4 pb-4">
-          <hr className="border-orange-900 w-full my-10" />
+        <div className="flex flex-col gap-y-4 w-full pb-4">
+          <hr className="border-orange-900 w-full" />
           <MonsterInfo monster={selectedMonster} />
         </div>
       )}

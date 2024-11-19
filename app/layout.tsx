@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
+import NavBar from "./_components/NavBar";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -31,7 +32,15 @@ export default function RootLayout({
           src="https://kit.fontawesome.com/f3426e52f3.js"
           crossOrigin="anonymous"
         />
-        <body className={`antialiased`}>{children}</body>
+        <body>
+          <NavBar />
+          <main
+            id="overallContainer"
+            className="antialiased justify-items-center justify-center px-48"
+          >
+            {children}
+          </main>
+        </body>
       </head>
     </html>
   );
