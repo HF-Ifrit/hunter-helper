@@ -8,6 +8,7 @@ export default function SharpnessBar({
     const barWidth = Math.floor((sharpness[color] / 400) * 100);
     return (
       <div
+        key={`sharpness-bar-${color}`}
         className="h-4 w-full"
         style={{ width: `${barWidth}%`, backgroundColor: `${color}` }}
       />
