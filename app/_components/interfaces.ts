@@ -131,7 +131,7 @@ interface WeaponCraftingInfo {
 }
 
 interface WeaponAssets {
-    icon: string // The weapon's icon
+    icon?: string // The weapon's icon
     image: string // An image showing the weapon's in game model
 }
 interface WeaponElement {
